@@ -3,7 +3,13 @@
  * Supports configurable VITE_API_URL and robust error handling.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined' &&
+   window.location.hostname !== 'localhost' &&
+   window.location.hostname !== '127.0.0.1'
+    ? 'https://fmcsa-hos-route-eld.onrender.com'
+    : 'http://localhost:8000');
 
 export async function planTrip(tripData) {
   const url = `${API_BASE_URL}/api/plan-trip/`;
