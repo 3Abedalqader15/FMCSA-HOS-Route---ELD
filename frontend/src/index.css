@@ -1,17 +1,273 @@
 @import "tailwindcss";
-
-/* Leaflet map styles */
 @import "leaflet/dist/leaflet.css";
 
-/* Custom fonts and print media */
+/* ===================================================================
+   FMCSA HOS Route & ELD — Premium Design System
+   ================================================================ */
+
+/* ── Google Fonts ── */
 @layer base {
+  :root {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* 🌙 Dark Theme (Default) */
+  :root,
+  :root[data-theme="dark"] {
+    --bg-primary: #060a14;
+    --bg-secondary: #0f1629;
+    --bg-tertiary: #1a2240;
+    --bg-elevated: #1e293b;
+    --bg-glass: rgba(15, 22, 41, 0.75);
+    --bg-glass-strong: rgba(15, 22, 41, 0.92);
+    --bg-input: rgba(6, 10, 20, 0.7);
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-inverse: #0f172a;
+
+    --accent-blue: #3b82f6;
+    --accent-blue-hover: #60a5fa;
+    --accent-indigo: #6366f1;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-purple: #a855f7;
+    --accent-cyan: #22d3ee;
+
+    --border-default: rgba(148, 163, 184, 0.1);
+    --border-subtle: rgba(148, 163, 184, 0.06);
+    --border-active: rgba(59, 130, 246, 0.4);
+
+    --glass-border: rgba(148, 163, 184, 0.12);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --glass-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
+
+    --glow-blue: 0 0 24px rgba(59, 130, 246, 0.25);
+    --glow-emerald: 0 0 24px rgba(16, 185, 129, 0.2);
+    --glow-rose: 0 0 24px rgba(244, 63, 94, 0.2);
+    --glow-indigo: 0 0 24px rgba(99, 102, 241, 0.25);
+
+    --gradient-hero: linear-gradient(135deg, #0c1527 0%, #060a14 40%, #0f0a1e 100%);
+    --gradient-card: linear-gradient(135deg, rgba(59, 130, 246, 0.06), rgba(99, 102, 241, 0.03));
+    --gradient-accent: linear-gradient(135deg, #3b82f6, #6366f1);
+    --gradient-success: linear-gradient(135deg, #10b981, #059669);
+    --gradient-shimmer: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+
+    --sidebar-bg: rgba(10, 14, 26, 0.95);
+    --sidebar-width: 260px;
+    --sidebar-width-collapsed: 72px;
+    --topbar-height: 64px;
+
+    --map-tile: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    --eld-bg: #ffffff;
+    --eld-text: #0f172a;
+
+    color-scheme: dark;
+  }
+
+  /* ☀️ Light Theme */
+  :root[data-theme="light"] {
+    --bg-primary: #f0f4f8;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f1f5f9;
+    --bg-elevated: #e8edf4;
+    --bg-glass: rgba(255, 255, 255, 0.82);
+    --bg-glass-strong: rgba(255, 255, 255, 0.95);
+    --bg-input: rgba(241, 245, 249, 0.8);
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-inverse: #f1f5f9;
+
+    --border-default: rgba(15, 23, 42, 0.1);
+    --border-subtle: rgba(15, 23, 42, 0.05);
+    --border-active: rgba(59, 130, 246, 0.5);
+
+    --glass-border: rgba(15, 23, 42, 0.1);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    --glass-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.1);
+
+    --glow-blue: 0 0 24px rgba(59, 130, 246, 0.15);
+    --glow-emerald: 0 0 24px rgba(16, 185, 129, 0.1);
+    --glow-rose: 0 0 24px rgba(244, 63, 94, 0.1);
+    --glow-indigo: 0 0 24px rgba(99, 102, 241, 0.15);
+
+    --gradient-hero: linear-gradient(135deg, #e8f0fe 0%, #f0f4f8 40%, #f3e8ff 100%);
+    --gradient-card: linear-gradient(135deg, rgba(59, 130, 246, 0.04), rgba(99, 102, 241, 0.02));
+    --gradient-shimmer: linear-gradient(90deg, transparent, rgba(0,0,0,0.02), transparent);
+
+    --sidebar-bg: rgba(255, 255, 255, 0.95);
+
+    --map-tile: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+    color-scheme: light;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100 antialiased selection:bg-blue-600 selection:text-white;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(59, 130, 246, 0.35);
+    color: var(--text-primary);
   }
 }
 
-/* Print Styles for FMCSA Inspection-Ready ELD Sheets */
+/* ── Utility Classes ── */
+@layer utilities {
+  .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  }
+
+  .glass {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: var(--bg-glass-strong);
+    backdrop-filter: blur(32px) saturate(1.3);
+    -webkit-backdrop-filter: blur(32px) saturate(1.3);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-card {
+    background: var(--gradient-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card:hover {
+    border-color: var(--border-active);
+    box-shadow: var(--glow-blue);
+    transform: translateY(-2px);
+  }
+
+  .gradient-text {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-shimmer);
+    animation: shimmer 2.5s infinite;
+  }
+
+  .glow-blue { box-shadow: var(--glow-blue); }
+  .glow-emerald { box-shadow: var(--glow-emerald); }
+  .glow-rose { box-shadow: var(--glow-rose); }
+  .glow-indigo { box-shadow: var(--glow-indigo); }
+
+  .text-theme-primary { color: var(--text-primary); }
+  .text-theme-secondary { color: var(--text-secondary); }
+  .text-theme-muted { color: var(--text-muted); }
+  .bg-theme-primary { background: var(--bg-primary); }
+  .bg-theme-secondary { background: var(--bg-secondary); }
+  .bg-theme-tertiary { background: var(--bg-tertiary); }
+
+  /* Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 9999px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+  }
+}
+
+/* ── Animations ── */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes stroke-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-gradient-shift { 
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite; 
+}
+.animate-stroke-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: stroke-draw 1.5s ease-out forwards;
+}
+.animate-fade-in-up { animation: fade-in-up 0.6s ease-out both; }
+.animate-spin-slow { animation: spin-slow 12s linear infinite; }
+
+/* Stagger delay utilities */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+
+/* ── Grid Background Pattern ── */
+.grid-pattern {
+  background-image:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Print Styles ── */
 @media print {
   body {
     background: white !important;
@@ -33,4 +289,41 @@
     margin-bottom: 2rem !important;
     page-break-inside: avoid;
   }
+}
+
+/* ── Leaflet Overrides ── */
+.leaflet-container {
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.custom-leaflet-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ── Range Input Styling ── */
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--bg-elevated);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+  border: 2px solid white;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
 }

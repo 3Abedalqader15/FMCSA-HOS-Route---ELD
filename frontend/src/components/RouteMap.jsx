@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Navigation, Coffee, Fuel, Moon, Flag, RotateCcw } from 'lucide-react';
+import { Navigation } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import GlassCard from './ui/GlassCard';
 
-// Custom Marker Icon Generator using SVG pins
+// Custom Marker Icon Generator
 function createCustomPin(color, symbol) {
   return L.divIcon({
     className: 'custom-leaflet-marker',
@@ -17,7 +19,7 @@ function createCustomPin(color, symbol) {
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         border: 2px solid #ffffff;
       ">
         <span style="
@@ -48,7 +50,6 @@ const ICONS = {
   FINAL_SIGNOFF: createCustomPin('#16a34a', '✅'),
 };
 
-// Component to automatically fit map bounds when coordinates change
 function ChangeView({ bounds }) {
   const map = useMap();
   useEffect(() => {
@@ -60,56 +61,53 @@ function ChangeView({ bounds }) {
 }
 
 export default function RouteMap({ routeCoordinates, stops }) {
+  const { theme } = useTheme();
   const hasRoute = routeCoordinates && routeCoordinates.length > 0;
-  const center = hasRoute ? routeCoordinates[0] : [39.8283, -98.5795]; // Center of USA
+  const center = hasRoute ? routeCoordinates[0] : [39.8283, -98.5795];
+
+  // Dark tiles for dark mode, light for light mode
+  const tileUrl = theme === 'dark'
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+  const LEGEND = [
+    { color: 'bg-blue-500', label: 'Start' },
+    { color: 'bg-purple-500', label: 'Pickup' },
+    { color: 'bg-amber-500', label: 'Rest' },
+    { color: 'bg-indigo-500', label: '10h Reset' },
+    { color: 'bg-emerald-500', label: 'Fuel' },
+    { color: 'bg-rose-500', label: 'Dropoff' },
+  ];
 
   return (
-    <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-4 shadow-xl overflow-hidden">
+    <GlassCard className="!p-4 overflow-hidden">
       <div className="flex items-center justify-between mb-3 px-2">
         <div className="flex items-center gap-2">
           <Navigation className="h-5 w-5 text-blue-400" />
-          <h3 className="text-sm font-bold text-white">Interactive CMV Route Map</h3>
+          <h3 className="text-sm font-bold text-[var(--text-primary)]">Interactive Route Map</h3>
         </div>
         {hasRoute && (
-          <div className="flex items-center gap-3 text-[11px] text-slate-400">
-            <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" /> Start
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block" /> Pickup
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" /> Rest
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block" /> 10h Reset
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Fuel
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" /> Dropoff
-            </span>
+          <div className="flex items-center gap-3 text-[11px] text-[var(--text-muted)]">
+            {LEGEND.map((l, i) => (
+              <span key={i} className="flex items-center gap-1">
+                <span className={`w-2 h-2 rounded-full ${l.color} inline-block`} />
+                {l.label}
+              </span>
+            ))}
           </div>
         )}
       </div>
 
-      <div className="h-[440px] w-full rounded-xl overflow-hidden border border-slate-800 relative z-10">
-        <MapContainer
-          center={center}
-          zoom={5}
-          scrollWheelZoom={true}
-          className="h-full w-full"
-        >
+      <div className="h-[440px] w-full rounded-xl overflow-hidden border border-[var(--glass-border)] relative z-10">
+        <MapContainer center={center} zoom={5} scrollWheelZoom={true} className="h-full w-full">
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url={tileUrl}
           />
 
           {hasRoute && (
             <>
               <ChangeView bounds={routeCoordinates} />
-              {/* Route Polyline */}
               <Polyline
                 positions={routeCoordinates}
                 color="#3b82f6"
@@ -119,7 +117,6 @@ export default function RouteMap({ routeCoordinates, stops }) {
             </>
           )}
 
-          {/* Planned Stop Markers */}
           {stops &&
             stops.map((stop, idx) => {
               if (!stop.lat || !stop.lng) return null;
@@ -129,27 +126,13 @@ export default function RouteMap({ routeCoordinates, stops }) {
                 <Marker key={`${stop.type}-${idx}`} position={[stop.lat, stop.lng]} icon={icon}>
                   <Popup>
                     <div className="p-1 font-sans text-slate-900 text-xs space-y-1">
-                      <div className="flex items-center gap-1.5 font-bold text-sm text-slate-900">
-                        <span>{stop.name}</span>
-                      </div>
+                      <div className="font-bold text-sm text-slate-900">{stop.name}</div>
                       <p className="text-slate-600 font-semibold">{stop.location}</p>
                       <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] border-t border-slate-200">
-                        <div>
-                          <span className="text-slate-500">Duration:</span>{' '}
-                          <strong>{stop.duration_hours}h</strong>
-                        </div>
-                        <div>
-                          <span className="text-slate-500">Status:</span>{' '}
-                          <strong className="text-blue-700">{stop.duty_status}</strong>
-                        </div>
-                        <div>
-                          <span className="text-slate-500">Arrival:</span>{' '}
-                          <strong>Hour {stop.arrival_time_hrs}</strong>
-                        </div>
-                        <div>
-                          <span className="text-slate-500">Milestone:</span>{' '}
-                          <strong>{stop.accumulated_miles} mi</strong>
-                        </div>
+                        <div><span className="text-slate-500">Duration:</span> <strong>{stop.duration_hours}h</strong></div>
+                        <div><span className="text-slate-500">Status:</span> <strong className="text-blue-700">{stop.duty_status}</strong></div>
+                        <div><span className="text-slate-500">Arrival:</span> <strong>Hour {stop.arrival_time_hrs}</strong></div>
+                        <div><span className="text-slate-500">Mile:</span> <strong>{stop.accumulated_miles} mi</strong></div>
                       </div>
                       <p className="text-[10px] text-slate-500 italic mt-1">{stop.remark}</p>
                     </div>
@@ -159,6 +142,6 @@ export default function RouteMap({ routeCoordinates, stops }) {
             })}
         </MapContainer>
       </div>
-    </div>
+    </GlassCard>
   );
 }
